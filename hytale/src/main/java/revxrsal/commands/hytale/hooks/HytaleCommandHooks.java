@@ -24,6 +24,7 @@
 package revxrsal.commands.hytale.hooks;
 
 import com.hypixel.hytale.server.core.command.system.CommandManager;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.command.ExecutableCommand;
 import revxrsal.commands.hook.CancelHandle;
@@ -40,25 +41,24 @@ public final class HytaleCommandHooks<A extends HytaleCommandActor> implements C
 
     private final Map<String, HytaleCommand<A>> registered = new HashMap<>();
 
-    private final Object plugin;
+    private final JavaPlugin plugin;
     private final ActorFactory<A> actorFactory;
 
-    public HytaleCommandHooks(final Object plugin, final ActorFactory<A> actorFactory) {
+    public HytaleCommandHooks(final JavaPlugin plugin, final ActorFactory<A> actorFactory) {
         this.plugin = plugin;
         this.actorFactory = actorFactory;
     }
 
     @Override
     public void onRegistered(@NotNull final ExecutableCommand<A> command, @NotNull final CancelHandle cancelHandle) {
+
         final String name = command.firstNode().name();
         if (!registered.containsKey(name)) {
 
-            System.out.println("Attempt registration of command: " + name);
             final String description = (command.description() == null)? "" : command.description();
             final HytaleCommand<A> hytaleCommand = new HytaleCommand<>(name, description, command.lamp(), actorFactory, command.permission());
             if(!hytaleCommand.hasBeenRegistered()) {
-                System.out.println("Registering command: " + name);
-                hytaleCommand.completeRegistration();
+                plugin.getCommandRegistry().registerCommand(hytaleCommand);
             }
             registered.put(name, hytaleCommand);
         }
