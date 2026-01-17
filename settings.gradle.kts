@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenCentral()
         maven("https://maven.fabricmc.net/")
     }
 }
@@ -8,6 +9,8 @@ pluginManagement {
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
+
+val hytaleLib = file("hytale/lib/HytaleServer.jar")
 
 rootProject.name = "lamp"
 
@@ -20,6 +23,11 @@ include("cli")
 include("sponge")
 include("jda")
 include("fabric")
+
+if(hytaleLib.exists()) {
+
+    include("hytale")
+}
 include("minestom")
 include("internal-paper-stubs")
 

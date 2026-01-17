@@ -1,0 +1,83 @@
+/*
+ * This file is part of lamp, licensed under the MIT License.
+ *
+ *  Copyright (c) Revxrsal <reflxction.github@gmail.com>
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+package revxrsal.commands.hytale.actor;
+
+import com.hypixel.hytale.server.core.Message;
+import com.hypixel.hytale.server.core.command.system.CommandSender;
+import com.hypixel.hytale.server.core.plugin.JavaPlugin;
+import com.hypixel.hytale.server.core.plugin.PluginBase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import revxrsal.commands.Lamp;
+import revxrsal.commands.process.MessageSender;
+
+/**
+ * Represents a functional interface that allows for creating custom
+ * implementations of {@link HytaleCommandActor} that wrap instances
+ * of {@link CommandSender}.
+ *
+ * @param <A> The actor type
+ */
+@FunctionalInterface
+public interface ActorFactory<A extends HytaleCommandActor> {
+
+    /**
+     * Returns the default {@link ActorFactory} that returns a
+     * simple {@link HytaleCommandActor} implementation
+     *
+     * @param plugin    The plugin to create for
+     * @return The default {@link ActorFactory}.
+     */
+    static @NotNull ActorFactory<HytaleCommandActor> defaultFactory(
+            @NotNull final PluginBase plugin
+    ) {
+        return new BasicActorFactory(plugin);
+    }
+
+    /**
+     * Returns the default {@link ActorFactory} that returns a
+     * simple {@link HytaleCommandActor} implementation
+     *
+     * @param plugin        The plugin to create for
+     * @param messageSender How components are sent. This can be used
+     *                      to add custom prefixes to messages, etc.
+     * @return The default {@link ActorFactory}.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    static <A extends HytaleCommandActor> Object defaultFactory(
+            @NotNull final JavaPlugin plugin,
+            @Nullable final MessageSender<? super A, Message> messageSender
+    ) {
+        return new BasicActorFactory(plugin, (MessageSender) messageSender);
+    }
+
+    /**
+     * Creates the actor from the given {@link CommandSender}
+     *
+     * @param sender Sender to create for
+     * @param lamp   The {@link Lamp} instance
+     * @return The created actor
+     */
+    @NotNull A create(@NotNull CommandSender sender, @NotNull Lamp<A> lamp);
+}

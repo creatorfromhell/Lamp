@@ -6,7 +6,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0")
     }
 }
 
@@ -87,8 +87,8 @@ subprojects {
     }
 
     dependencies {
-        compileOnly("org.projectlombok:lombok:1.18.30")
-        annotationProcessor("org.projectlombok:lombok:1.18.30")
+        compileOnly("org.projectlombok:lombok:1.18.42")
+        annotationProcessor("org.projectlombok:lombok:1.18.42")
 
         compileOnly("org.jetbrains:annotations:24.0.1")
     }

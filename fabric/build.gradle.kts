@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
     id("java")
-    id("fabric-loom") version "1.8-SNAPSHOT"
+    id("fabric-loom") version "1.14-SNAPSHOT"
 }
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 
 val minecraftVersion = "1.21"
 val yarnMappings = "1.21+build.9"
-val loaderVersion = "0.16.7"
+val loaderVersion = "0.18.4"
 val fabricVersion = "0.102.0+1.21"
 val permissionsVersion = "0.3.1"
 val javaVersion = 21
