@@ -24,14 +24,22 @@
 package revxrsal.commands.hytale.hooks;
 
 import com.hypixel.hytale.server.core.command.system.CommandManager;
+import com.hypixel.hytale.server.core.command.system.arguments.system.Argument;
+import com.hypixel.hytale.server.core.command.system.arguments.system.OptionalArg;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgTypes;
+import com.hypixel.hytale.server.core.command.system.arguments.types.ArgumentType;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.command.ExecutableCommand;
+import revxrsal.commands.help.Help;
 import revxrsal.commands.hook.CancelHandle;
 import revxrsal.commands.hook.CommandRegisteredHook;
 import revxrsal.commands.hook.CommandUnregisteredHook;
 import revxrsal.commands.hytale.actor.ActorFactory;
 import revxrsal.commands.hytale.actor.HytaleCommandActor;
+import revxrsal.commands.hytale.arguments.ArgumentConversionFactory;
+import revxrsal.commands.node.CommandNode;
+import revxrsal.commands.node.ParameterNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +48,8 @@ import java.util.Map;
 public final class HytaleCommandHooks<A extends HytaleCommandActor> implements CommandRegisteredHook<A>, CommandUnregisteredHook<A> {
 
     private final Map<String, HytaleCommand<A>> registered = new HashMap<>();
+
+    private final ArgumentConversionFactory argumentConversionFactory = new ArgumentConversionFactory();
 
     private final JavaPlugin plugin;
     private final ActorFactory<A> actorFactory;
@@ -57,6 +67,22 @@ public final class HytaleCommandHooks<A extends HytaleCommandActor> implements C
 
             final String description = (command.description() == null)? "" : command.description();
             final HytaleCommand<A> hytaleCommand = new HytaleCommand<>(name, description, command.lamp(), actorFactory, command.permission());
+
+            for(final CommandNode<A> node : command.nodes()) {
+            }
+
+            params(hytaleCommand, command);
+
+            for(final ExecutableCommand<A> child : command.childrenCommands()) {
+                final String childName = child.firstNode().name();
+
+                final String childDescription = (child.description() == null)? "" : child.description();
+                final HytaleCommand<A> hyaleChild = new HytaleCommand<>(childName, childDescription, child.lamp(), actorFactory, child.permission());
+
+                params(hyaleChild, child);
+                hytaleCommand.addSubCommand(hyaleChild);
+            }
+
             if(!hytaleCommand.hasBeenRegistered()) {
                 plugin.getCommandRegistry().registerCommand(hytaleCommand);
             }
@@ -75,6 +101,30 @@ public final class HytaleCommandHooks<A extends HytaleCommandActor> implements C
                             && entry.getValue().getOwner() != null
                             && entry.getValue().getOwner().equals(plugin)
             );
+        }
+    }
+
+    public void params(final HytaleCommand<A> hytaleCommand , final ExecutableCommand<A> command) {
+
+
+        for(final ParameterNode<A, ?> node : command.parameters().values()) {
+
+            final String nodeDescription = (node.description() == null)? "" : node.description();
+            if(node.isFlag()) {
+
+                hytaleCommand.withFlagArg(node.name(), nodeDescription);
+                continue;
+            }
+
+            final ArgumentType<?> argumentType = argumentConversionFactory.convert(node);
+
+            if(node.isOptional()) {
+
+                hytaleCommand.withOptionalArg(node.name(), nodeDescription, argumentType);
+            } else {
+
+                hytaleCommand.withRequiredArg(node.name(), nodeDescription, argumentType);
+            }
         }
     }
 }

@@ -45,22 +45,25 @@ import static revxrsal.commands.util.Collections.map;
  * If the player inputs {@code me} or {@code self}, the parser will return the
  * executing player (or give an error if the sender is not a player)
  */
-public final class PlayerParameterType implements ParameterType<HytaleCommandActor, Player> {
+public final class PlayerParameterType implements ParameterType<HytaleCommandActor, PlayerRef> {
 
     @Override
-    public Player parse(@NotNull final MutableStringStream input, @NotNull final ExecutionContext<HytaleCommandActor> context) {
+    public PlayerRef parse(@NotNull final MutableStringStream input, @NotNull final ExecutionContext<HytaleCommandActor> context) {
         final String name = input.readString();
-        if (name.equals("self") || name.equals("me") || name.equals("@s"))
-            return context.actor().requirePlayer();
-        final PlayerRef plrRef = Universe.get().getPlayer(name, NameMatching.EXACT);
-        if (plrRef != null) {
+        if (name.equals("self") || name.equals("me") || name.equals("@s")) {
+            final Ref<EntityStore> ref = context.actor().requirePlayer().getReference();
+            final PlayerRef plrRef = ref.getStore().getComponent(ref, PlayerRef.getComponentType());
 
-            final Ref<EntityStore> ref = plrRef.getReference();
-            if (ref == null) throw new InvalidPlayerException(name);
+            if (plrRef != null) {
+                return plrRef;
+            }
+            throw new InvalidPlayerException(name);
+        }
 
-            final Player player = ref.getStore().getComponent(ref, Player.getComponentType());
-            if (player == null) throw new InvalidPlayerException(name);
-            return player;
+        for(final PlayerRef plrRef : Universe.get().getPlayers()) {
+            if(plrRef.getUsername().equalsIgnoreCase(name)) {
+                return plrRef;
+            }
         }
         throw new InvalidPlayerException(name);
     }

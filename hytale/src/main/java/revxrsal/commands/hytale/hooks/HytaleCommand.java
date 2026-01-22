@@ -27,6 +27,7 @@ public final class HytaleCommand<A extends HytaleCommandActor> extends CommandBa
         this.lamp = lamp;
         this.actorFactory = actorFactory;
         this.permission = permission;
+        this.setAllowsExtraArguments(true);
     }
 
     @Override protected void executeSync(@NotNull final CommandContext commandContext) {

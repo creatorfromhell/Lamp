@@ -1,0 +1,20 @@
+{
+    "Group": "Revxrsal",
+    "Name": "Lamp",
+    "Version": "${version}",
+    "Description": "A modern annotations-driven commands framework for Java and Kotlin",
+    "Authors": [
+        {
+            "Name": "Revxrsal"
+        },
+        {
+            "Name": "creatorfromhell"
+        }
+    ],
+    "Website": "https://foxhut.gitbook.io/lamp-docs",
+    "ServerVersion": "*",
+    "Dependencies": {},
+    "OptionalDependencies": {},
+    "DisabledByDefault": false,
+    "IncludesAssetPack": true
+}

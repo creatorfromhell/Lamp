@@ -28,6 +28,7 @@ import com.hypixel.hytale.server.core.console.ConsoleSender;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.PluginBase;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import org.jetbrains.annotations.NotNull;
 import revxrsal.commands.Lamp;
@@ -103,7 +104,7 @@ public final class HytaleVisitors {
     public static <A extends HytaleCommandActor> @NotNull LampBuilderVisitor<A> hytaleParameterTypes() {
         return builder -> {
             builder.parameterTypes()
-                    .addParameterTypeLast(Player.class, new PlayerParameterType())
+                    .addParameterTypeLast(PlayerRef.class, new PlayerParameterType())
                     .addParameterTypeLast(World.class, new WorldParameterType());
         };
     }
